@@ -1,12 +1,10 @@
 import React from 'react';
 import './App.css';
+import StudentRouter from './config/router/router/StudentRouter';
 
 function App() {
   return (
-    <>
-      <h1>Student Management</h1>
-      <p>Dummy test</p>
-    </>
+    <StudentRouter />
   );
 }
 
