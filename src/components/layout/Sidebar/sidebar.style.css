@@ -1,0 +1,7 @@
+.active {
+  background-color: #3730A3;
+  width: 90%;
+  border-radius: 5px;
+  -webkit-box-shadow: 0px 0px 20px 5px rgba(0,0,0,0.4); 
+box-shadow: 0px 0px 20px 5px rgba(0,0,0,0.1);
+}

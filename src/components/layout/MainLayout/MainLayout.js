@@ -3,7 +3,7 @@ import Sidebar from '../Sidebar/Sidebar';
 
 function MainLayout() {
   return (
-    <div className="grid grid-flow-col">
+    <div className="grid grid-flow-col auto-cols-fr">
       <div className="col-span-2">
         <Sidebar />
       </div>

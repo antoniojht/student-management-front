@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .sidebar-elem {
+    @apply flex gap-2 p-2 text-white font-light ml-2;
+  }
+}
+
 a {
   text-decoration: none !important;
 }
