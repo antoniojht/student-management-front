@@ -1,8 +1,16 @@
+import Dashboard from '../Dashboard/Dashboard';
+import Sidebar from '../Sidebar/Sidebar';
+
 function MainLayout() {
   return (
-    <h1 className="text-3xl font-bold underline">
-      Main layout
-    </h1>
+    <div className="grid grid-flow-col">
+      <div className="col-span-2">
+        <Sidebar />
+      </div>
+      <div className="col-span-10">
+        <Dashboard />
+      </div>
+    </div>
   );
 }
 
