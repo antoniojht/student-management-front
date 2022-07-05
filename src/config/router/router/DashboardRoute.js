@@ -6,7 +6,7 @@ import Subjects from '../../../components/views/subjects/Subjects';
 
 function DashboardRoute() {
   return (
-    <div>
+    <div className="container">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="students" element={<Students />} />
