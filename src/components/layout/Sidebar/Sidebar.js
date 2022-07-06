@@ -1,8 +1,17 @@
+import { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
+import { logout } from '../../../utils/auth';
+import AuthContext from '../../../context/authContext';
 import '../../../App.css';
 import './sidebar.style.css';
 
 function Sidebar() {
+  const { dispatch } = useContext(AuthContext);
+
+  const closeSession = () => {
+    logout(dispatch);
+  };
+
   return (
     <div className="container min-h-screen flex gap-y-2 flex-col bg-indigo-600">
       <p className="font-bold text-2xl text-white text-center">App</p>
@@ -30,7 +39,7 @@ function Sidebar() {
         </svg>
         Asignaturas
       </NavLink>
-      <NavLink className="sidebar-elem bottom-0 absolute" to="/login">
+      <NavLink className="sidebar-elem bottom-0 absolute" onClick={closeSession} to="/login">
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
           <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
         </svg>
