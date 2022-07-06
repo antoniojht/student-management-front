@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useReducer } from 'react';
 import AuthContext from './context/authContext';
 import authReducer from './utils/reducers/authReducer';
-import StudentRouter from './config/router/router/StudentRouter';
+import StudentRouter from './config/router/StudentRouter';
 import './App.css';
 
 const init = () => JSON.parse(localStorage.getItem('user')) || { logged: false };

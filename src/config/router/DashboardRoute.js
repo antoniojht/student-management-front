@@ -1,8 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
-import Home from '../../../components/views/home/Home';
-import Students from '../../../components/views/students/Students';
-import Groups from '../../../components/views/groups/Groups';
-import Subjects from '../../../components/views/subjects/Subjects';
+import Home from '../../components/views/home/Home';
+import Students from '../../components/views/students/Students';
+import Groups from '../../components/views/groups/Groups';
+import Subjects from '../../components/views/subjects/Subjects';
 
 function DashboardRoute() {
   return (

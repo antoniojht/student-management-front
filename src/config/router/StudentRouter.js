@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import MainLayout from '../../../components/layout/MainLayout/MainLayout';
+import MainLayout from '../../components/layout/MainLayout/MainLayout';
 import PrivateRoute from './PrivateRoute';
 import PublicRoute from './PublicRoute';
-import Login from '../../../components/views/login/Login';
+import Login from '../../components/views/login/Login';
 
 function StudentRouter() {
   return (

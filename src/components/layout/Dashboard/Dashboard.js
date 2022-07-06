@@ -1,4 +1,4 @@
-import DashboardRoute from '../../../config/router/router/DashboardRoute';
+import DashboardRoute from '../../../config/router/DashboardRoute';
 
 function Dashboard() {
   return (
