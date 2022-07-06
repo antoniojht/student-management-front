@@ -1,4 +1,28 @@
+import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { login } from '../../../utils/auth';
+import AuthContext from '../../../context/authContext';
+import useForm from '../../../hooks/useForm';
+
 function Login() {
+  const { dispatch } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const [formValues, handleInputChange] = useForm({
+    email: '', password: '',
+  });
+
+  const { email, password } = formValues;
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    const data = await login(dispatch, email, password);
+    if (data.name) {
+      navigate('/', { replace: true });
+    }
+  };
+
   return (
     <section className="h-screen">
       <div className="container px-6 py-12 h-full">
@@ -11,10 +35,13 @@ function Login() {
             />
           </div>
           <div className="md:w-8/12 lg:w-5/12 lg:ml-20">
-            <form>
+            <form onSubmit={handleLogin}>
               <div className="mb-6">
                 <input
                   type="text"
+                  name="email"
+                  value={email}
+                  onChange={handleInputChange}
                   className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                   placeholder="Email address"
                 />
@@ -22,6 +49,9 @@ function Login() {
               <div className="mb-6">
                 <input
                   type="password"
+                  name="password"
+                  value={password}
+                  onChange={handleInputChange}
                   className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                   placeholder="Password"
                 />
@@ -32,7 +62,7 @@ function Login() {
                 data-mdb-ripple="true"
                 data-mdb-ripple-color="light"
               >
-                Sign in
+                Login
               </button>
             </form>
           </div>
