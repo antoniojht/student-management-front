@@ -1,3 +1,3 @@
-const BACKEND_URL = 'http://localhost:8080';
+export const BACKEND_URL = 'http://localhost:8080';
 
-export default BACKEND_URL;
+export const SUCCESS = 'success';
