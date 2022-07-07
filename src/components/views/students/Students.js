@@ -1,5 +1,5 @@
 import {
-  useContext, useEffect, useReducer, useState,
+  useContext, useEffect, useReducer,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Search from '../../common/Search/Search';
@@ -9,28 +9,21 @@ import AuthContext from '../../../context/authContext';
 import { SUCCESS } from '../../../consts/consts';
 import types from '../../../types/studentTypes';
 import Pagination from '../../common/Pagination/Pagination';
+import usePagination from '../../../hooks/usePagination';
 
 function Students() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [state, dispatch] = useReducer(studentReducer, {});
-  const [paginate, setPaginate] = useState({ skip: 0, limit: 5 });
+  const [increment, decrement, skip, limit] = usePagination();
 
   useEffect(() => {
-    list(paginate.skip, paginate.limit, user.token).then((response) => {
+    list(skip, limit, user.token).then((response) => {
       if (response.status === SUCCESS) {
         dispatch({ type: types.list, payload: response.data });
       }
     });
   }, [state.users]);
-
-  const increment = () => {
-    setPaginate((prevState) => ({ ...prevState, skip: prevState.skip + 1 }));
-  };
-
-  const decrement = () => {
-    setPaginate((prevState) => ({ ...prevState, skip: prevState.skip - 1 }));
-  };
 
   return (
     <>
@@ -55,7 +48,7 @@ function Students() {
             onClick={() => {
               navigate('/student');
             }}
-            className="main-button"
+            className="main-button hover:cursor-pointer"
           >
             Crear alumno
           </button>
@@ -68,19 +61,19 @@ function Students() {
             <table className="min-w-full">
               <thead>
                 <tr>
-                  <th className="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                  <th className="table-head">
                     Nombre
                   </th>
-                  <th className="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                  <th className="table-head">
                     Telefono
                   </th>
-                  <th className="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                  <th className="table-head">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                  <th className="table-head">
                     Curso
                   </th>
-                  <th className="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                  <th className="table-head">
                     Editar
                   </th>
                 </tr>
@@ -127,7 +120,7 @@ function Students() {
                     >
                       <button
                         type="button"
-                        className="flex p-2.5 bg-indigo-500 rounded-xl hover:rounded-3xl hover:bg-indigo-600 transition-all duration-300 text-white"
+                        className="flex p-2.5 bg-indigo-500 rounded-xl hover:rounded-3xl hover:bg-indigo-600 transition-all duration-300 text-white hover:cursor-pointer"
                         onClick={() => {
                           navigate(`/student/${student._id}`);
                         }}
