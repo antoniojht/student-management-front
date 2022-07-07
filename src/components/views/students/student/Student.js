@@ -8,6 +8,7 @@ import uiTypes from '../../../../types/uiTypes';
 import studentTypes from '../../../../types/studentTypes';
 import uiReducer from '../../../../utils/reducers/uiReducer';
 import Loading from '../../../common/Loading/Loading';
+import Error from '../../../common/Error/Error';
 
 function Student() {
   const { user, dispatch } = useContext(AuthContext);
@@ -40,17 +41,18 @@ function Student() {
 
     if (newUser.status === SUCCESS) {
       dispatch({ type: studentTypes.create, user: newUser.data });
+      uiDispatch({ type: uiTypes.uiRemoveError });
+      navigate('/students', { replace: true });
     } else {
-      uiDispatch({ type: uiTypes.uiSetError, msgError: 'Ocurrio un error durante el registro' });
+      uiDispatch({ type: uiTypes.uiSetError, payload: 'Ocurrio un error durante el registro' });
     }
-
-    navigate('/students', { replace: true });
 
     uiDispatch({ type: uiTypes.uiFinishLoading });
   };
 
   return (
     <>
+      {uiState.msgError && <Error />}
       {uiState.loading && <Loading />}
       <div className="mx-auto m-8 w-full max-w-[550px]">
         <form onSubmit={handleSubmit}>
