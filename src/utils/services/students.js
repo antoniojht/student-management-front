@@ -1,6 +1,6 @@
 import { BACKEND_URL } from '../../consts/consts';
 
-const create = async (student, token) => {
+export const create = async (student, token) => {
   // eslint-disable-next-line no-param-reassign
   student.rol = 'student';
 
@@ -18,4 +18,16 @@ const create = async (student, token) => {
   return response.json();
 };
 
-export default create;
+export const list = async (skip = 1, limit = 5, token) => {
+  const requestOptions = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const response = await fetch(`${BACKEND_URL}/user/getStudents?skip=${skip}&limit=${limit}`, requestOptions);
+
+  return response.json();
+};

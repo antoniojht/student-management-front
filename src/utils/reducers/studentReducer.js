@@ -1,6 +1,6 @@
 import types from '../../types/studentTypes';
 
-const authReducer = (state = {}, action) => {
+const studentReducer = (state = {}, action) => {
   switch (action.type) {
     case types.create:
       return {
@@ -8,11 +8,11 @@ const authReducer = (state = {}, action) => {
       };
     case types.list:
       return {
-        ...state,
+        users: action.payload,
       };
     default:
       return state;
   }
 };
 
-export default authReducer;
+export default studentReducer;

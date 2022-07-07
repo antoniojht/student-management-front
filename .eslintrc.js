@@ -23,5 +23,6 @@ module.exports = {
     'react/prop-types': 'off',
     'default-param-last': 'off',
     'jsx-a11y/label-has-associated-control': 'off',
+    'no-underscore-dangle': 'off',
   },
 };

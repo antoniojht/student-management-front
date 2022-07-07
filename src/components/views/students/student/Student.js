@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { SUCCESS } from '../../../../consts/consts';
 import AuthContext from '../../../../context/authContext';
 import useForm from '../../../../hooks/useForm';
-import create from '../../../../utils/services/students';
+import { create } from '../../../../utils/services/students';
 import uiTypes from '../../../../types/uiTypes';
 import studentTypes from '../../../../types/studentTypes';
 import uiReducer from '../../../../utils/reducers/uiReducer';
