@@ -8,7 +8,9 @@ const usePagination = () => {
   };
 
   const decrement = () => {
-    setPaginate((prevState) => ({ ...prevState, skip: prevState.skip - 1 }));
+    if (paginate.skip > 0) {
+      setPaginate((prevState) => ({ ...prevState, skip: prevState.skip - 1 }));
+    }
   };
 
   return [increment, decrement, paginate.skip, paginate.limit];
