@@ -1,5 +1,5 @@
 import { BACKEND_URL } from '../consts/consts';
-import types from '../types/types';
+import types from '../types/authTypes';
 
 export const login = async (dispatch, email, password) => {
   const requestOptions = {

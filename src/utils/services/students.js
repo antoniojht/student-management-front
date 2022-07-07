@@ -3,6 +3,7 @@ import { BACKEND_URL } from '../../consts/consts';
 const create = async (student, token) => {
   // eslint-disable-next-line no-param-reassign
   student.rol = 'student';
+
   const requestOptions = {
     method: 'POST',
     headers: {
@@ -13,9 +14,8 @@ const create = async (student, token) => {
   };
 
   const response = await fetch(`${BACKEND_URL}/user/create`, requestOptions);
-  const data = await response.json();
 
-  return data;
+  return response.json();
 };
 
 export default create;
