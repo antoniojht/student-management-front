@@ -24,5 +24,6 @@ module.exports = {
     'default-param-last': 'off',
     'jsx-a11y/label-has-associated-control': 'off',
     'no-underscore-dangle': 'off',
+    'react/jsx-props-no-spreading': 'off',
   },
 };

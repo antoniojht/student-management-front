@@ -10,6 +10,7 @@ import { SUCCESS } from '../../../consts/consts';
 import types from '../../../types/studentTypes';
 import Pagination from '../../common/Pagination/Pagination';
 import usePagination from '../../../hooks/usePagination';
+import StudentRow from './StudentRow';
 
 function Students() {
   const { user } = useContext(AuthContext);
@@ -32,13 +33,17 @@ function Students() {
       </p>
 
       <div className="flex justify-between m-8">
-        <Search />
+        <div className="mt-8">
+          <Search />
+        </div>
         <div>
-
-          <select className="rounded bg-white px-6 shadow-xl ring-1 ring-gray-900/5 py-2 mr-5">
-            <option disabled defaultValue>
-              Ordenar por
-            </option>
+          <label
+            htmlFor="orderBy"
+            className="mb-3 block text-base font-medium text-[#07074D]"
+          >
+            Ordenar por
+          </label>
+          <select name="orderBy" className="rounded bg-white px-6 shadow-xl ring-1 ring-gray-900/5 py-2 mr-5">
             <option>Nombre</option>
             <option>Apellido</option>
             <option>Curso</option>
@@ -68,7 +73,7 @@ function Students() {
                     Telefono
                   </th>
                   <th className="table-head">
-                    Status
+                    Estado
                   </th>
                   <th className="table-head">
                     Curso
@@ -80,67 +85,7 @@ function Students() {
               </thead>
               <tbody className="bg-white">
                 {state.users?.map((student) => (
-                  <tr key={student.email}>
-                    <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0 w-10 h-10">
-                          <div className="flex items-center justify-center w-12 h-12 font-bold rounded-full select-none text-cyan-800 bg-cyan-100">
-                            {student.name.charAt(0)}
-                          </div>
-                        </div>
-
-                        <div className="ml-4">
-                          <div className="text-sm font-medium leading-5 text-gray-900">
-                            {student.name}
-                            <p className="font-light text-xs text-gray-500 ">{student.email}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-
-                    <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                      <div className="text-sm leading-5 text-gray-500">{student.telephone}</div>
-                    </td>
-
-                    <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                      {student.active
-                        ? (
-                          <span
-                            className="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full"
-                          >
-                            Activo
-                          </span>
-                        )
-                        : (
-                          <span
-                            className="inline-flex px-2 text-xs font-semibold leading-5 text-red-600 bg-red-200 rounded-full"
-                          >
-                            Inactivo
-                          </span>
-                        )}
-                    </td>
-
-                    <td
-                      className="px-6 py-4 text-sm leading-5 text-gray-500 whitespace-no-wrap border-b border-gray-200"
-                    >
-                      {student.course.length > 0 ? 'Dummy course' : 'No asignado'}
-                    </td>
-                    <td
-                      className="px-6 py-4 text-sm leading-5 text-gray-500 whitespace-no-wrap border-b border-gray-200"
-                    >
-                      <button
-                        type="button"
-                        className="flex p-2.5 bg-indigo-500 rounded-xl hover:rounded-3xl hover:bg-indigo-600 transition-all duration-300 text-white hover:cursor-pointer"
-                        onClick={() => {
-                          navigate(`/student/${student._id}`);
-                        }}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                      </button>
-                    </td>
-                  </tr>
+                  <StudentRow {...student} />
                 ))}
               </tbody>
             </table>

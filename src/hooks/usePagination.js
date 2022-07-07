@@ -4,12 +4,12 @@ const usePagination = () => {
   const [paginate, setPaginate] = useState({ skip: 0, limit: 5 });
 
   const increment = () => {
-    setPaginate((prevState) => ({ ...prevState, skip: prevState.skip + 1 }));
+    setPaginate((prevState) => ({ ...prevState, skip: prevState.skip + 5 }));
   };
 
   const decrement = () => {
     if (paginate.skip > 0) {
-      setPaginate((prevState) => ({ ...prevState, skip: prevState.skip - 1 }));
+      setPaginate((prevState) => ({ ...prevState, skip: prevState.skip - 5 }));
     }
   };
 
