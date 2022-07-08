@@ -46,7 +46,8 @@ function Students() {
           <select name="orderBy" className="rounded bg-white px-6 shadow-xl ring-1 ring-gray-900/5 py-2 mr-5">
             <option>Nombre</option>
             <option>Apellido</option>
-            <option>Curso</option>
+            <option>Asignatura</option>
+            <option>Fecha</option>
           </select>
           <button
             type="button"
@@ -76,7 +77,7 @@ function Students() {
                     Estado
                   </th>
                   <th className="table-head">
-                    Curso
+                    Asignatura
                   </th>
                   <th className="table-head">
                     Editar

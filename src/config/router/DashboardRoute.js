@@ -14,7 +14,11 @@ function DashboardRoute() {
         <Route path="student" element={<Student />} />
         <Route path="student/:id" element={<Student />} />
         <Route path="groups" element={<Groups />} />
+        <Route path="group" element={<Groups />} />
+        <Route path="group/:id" element={<Groups />} />
         <Route path="subjects" element={<Subjects />} />
+        <Route path="subject" element={<Subjects />} />
+        <Route path="subject/:id" element={<Subjects />} />
       </Routes>
     </div>
   );
