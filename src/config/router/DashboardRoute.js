@@ -4,6 +4,7 @@ import Students from '../../components/views/students/Students';
 import Student from '../../components/views/students/student/Student';
 import Groups from '../../components/views/groups/Groups';
 import Subjects from '../../components/views/subjects/Subjects';
+import Subject from '../../components/views/subjects/subject/Subject';
 
 function DashboardRoute() {
   return (
@@ -17,8 +18,8 @@ function DashboardRoute() {
         <Route path="group" element={<Groups />} />
         <Route path="group/:id" element={<Groups />} />
         <Route path="subjects" element={<Subjects />} />
-        <Route path="subject" element={<Subjects />} />
-        <Route path="subject/:id" element={<Subjects />} />
+        <Route path="subject" element={<Subject />} />
+        <Route path="subject/:id" element={<Subject />} />
       </Routes>
     </div>
   );
