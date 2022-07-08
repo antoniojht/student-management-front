@@ -3,11 +3,11 @@ import {
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Search from '../../common/Search/Search';
-import studentReducer from '../../../utils/reducers/studentReducer';
+import subjectReducer from '../../../utils/reducers/subjectReducer';
 import { list } from '../../../utils/services/subjects';
 import AuthContext from '../../../context/authContext';
 import { SUCCESS } from '../../../consts/consts';
-import types from '../../../types/studentTypes';
+import types from '../../../types/subjectTypes';
 import Pagination from '../../common/Pagination/Pagination';
 import usePagination from '../../../hooks/usePagination';
 import SubjectRow from './SubjectRow';
@@ -15,7 +15,7 @@ import SubjectRow from './SubjectRow';
 function Subjects() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [state, dispatch] = useReducer(studentReducer, {});
+  const [state, dispatch] = useReducer(subjectReducer, {});
   const [increment, decrement, skip, limit] = usePagination();
 
   useEffect(() => {
@@ -24,7 +24,7 @@ function Subjects() {
         dispatch({ type: types.list, payload: response.data });
       }
     });
-  }, [state.users]);
+  }, []);
 
   return (
     <>
@@ -67,7 +67,7 @@ function Subjects() {
                 </tr>
               </thead>
               <tbody className="bg-white">
-                {state.users?.map((subject) => (
+                {state.subjects?.map((subject) => (
                   <SubjectRow {...subject} />
                 ))}
               </tbody>

@@ -24,7 +24,7 @@ function Students() {
         dispatch({ type: types.list, payload: response.data });
       }
     });
-  }, [state.users]);
+  }, []);
 
   return (
     <>

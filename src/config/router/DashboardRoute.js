@@ -16,7 +16,7 @@ function DashboardRoute() {
         <Route path="student/:id" element={<Student />} />
         <Route path="groups" element={<Groups />} />
         <Route path="group" element={<Groups />} />
-        <Route path="group/:id" element={<Groups />} />
+        <Route path="group/:name" element={<Groups />} />
         <Route path="subjects" element={<Subjects />} />
         <Route path="subject" element={<Subject />} />
         <Route path="subject/:id" element={<Subject />} />

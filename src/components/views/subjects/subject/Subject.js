@@ -36,7 +36,7 @@ function Student() {
     uiDispatch({ type: uiTypes.uiStartLoading });
 
     const newSubject = await create(formValues, user.token);
-    console.log(newSubject);
+
     if (newSubject.status === SUCCESS) {
       dispatch({ type: subjectTypes.create, user: newSubject.data });
       uiDispatch({ type: uiTypes.uiRemoveError });
