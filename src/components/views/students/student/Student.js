@@ -1,4 +1,6 @@
-import { useContext, useEffect, useReducer } from 'react';
+import {
+  useContext, useEffect, useReducer, useState,
+} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { SUCCESS } from '../../../../consts/consts';
 import AuthContext from '../../../../context/authContext';
@@ -12,21 +14,22 @@ import Error from '../../../common/Error/Error';
 import studentReducer from '../../../../utils/reducers/studentReducer';
 
 function Student() {
+  const [creating, setCreating] = useState(false);
   const { user, dispatch } = useContext(AuthContext);
   const [uiState, uiDispatch] = useReducer(uiReducer, {});
   const [, stateDispatch] = useReducer(studentReducer, {});
   const navigate = useNavigate();
   const params = useParams();
 
-  const [formValues, setValues, handleInputChange] = useForm({
-    name: '', surname: '', telephone: '', email: '',
+  // Show: email, name, surname, telephone, course, activo, scores, payments
+  const [formValues, setValues, handleInputChange, handleToggleChange] = useForm({
+    name: '', surname: '', telephone: '', email: '', active: false,
   });
 
   const {
-    name, surname, telephone, email,
+    name, surname, telephone, email, active,
   } = formValues;
 
-  // TODO: Extract to custom hook. Create generic type
   useEffect(() => {
     if (params.id) {
       getById(params.id, user.token)
@@ -44,10 +47,10 @@ function Student() {
         });
     } else {
       console.log('creating');
+      setCreating(true);
     }
   }, [params.id]);
 
-  // TODO: Create generic handleSubmit function and wrap it into a custom hook
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -75,7 +78,7 @@ function Student() {
           <div className="mb-5">
             <label
               htmlFor="name"
-              className="mb-3 block text-base font-medium text-[#07074D]"
+              className="label-form"
             >
               Nombre
             </label>
@@ -92,7 +95,7 @@ function Student() {
           <div className="mb-5">
             <label
               htmlFor="name"
-              className="mb-3 block text-base font-medium text-[#07074D]"
+              className="label-form"
             >
               Apellidos
             </label>
@@ -109,7 +112,7 @@ function Student() {
           <div className="mb-5">
             <label
               htmlFor="name"
-              className="mb-3 block text-base font-medium text-[#07074D]"
+              className="label-form"
             >
               Telefono
             </label>
@@ -126,7 +129,7 @@ function Student() {
           <div className="mb-5">
             <label
               htmlFor="email"
-              className="mb-3 block text-base font-medium text-[#07074D]"
+              className="label-form"
             >
               Email
             </label>
@@ -140,6 +143,12 @@ function Student() {
               className="w-full shadow-md rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-indigo-600 focus:shadow-md"
             />
           </div>
+          {!creating && (
+            <div className="mb-8">
+              <label htmlFor="toggle" className="label-form">Activo</label>
+              <input type="checkbox" name="active" id="toggle" className="py-3 px-3 rounded-full shadow-md checked:bg-blue-500 cursor-pointer" checked={active} onChange={handleToggleChange} value={active} />
+            </div>
+          )}
           <div>
             <button
               type="submit"
