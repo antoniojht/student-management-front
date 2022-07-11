@@ -3,28 +3,22 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { SUCCESS } from '../../../../consts/consts';
 import AuthContext from '../../../../context/authContext';
 import useForm from '../../../../hooks/useForm';
-import { create } from '../../../../utils/services/students';
+import { create, getById } from '../../../../utils/services/students';
 import uiTypes from '../../../../types/uiTypes';
 import studentTypes from '../../../../types/studentTypes';
 import uiReducer from '../../../../utils/reducers/uiReducer';
 import Loading from '../../../common/Loading/Loading';
 import Error from '../../../common/Error/Error';
+import studentReducer from '../../../../utils/reducers/studentReducer';
 
 function Student() {
   const { user, dispatch } = useContext(AuthContext);
   const [uiState, uiDispatch] = useReducer(uiReducer, {});
+  const [, stateDispatch] = useReducer(studentReducer, {});
   const navigate = useNavigate();
   const params = useParams();
 
-  useEffect(() => {
-    if (params.id) {
-      console.log('editing');
-    } else {
-      console.log('creating');
-    }
-  }, [params.id]);
-
-  const [formValues, handleInputChange] = useForm({
+  const [formValues, setValues, handleInputChange] = useForm({
     name: '', surname: '', telephone: '', email: '',
   });
 
@@ -32,6 +26,28 @@ function Student() {
     name, surname, telephone, email,
   } = formValues;
 
+  // TODO: Extract to custom hook. Create generic type
+  useEffect(() => {
+    if (params.id) {
+      getById(params.id, user.token)
+        .then((response) => {
+          const { status, data } = response;
+          if (status === SUCCESS) {
+            uiDispatch({ type: uiTypes.uiRemoveError });
+            stateDispatch({ type: studentTypes.set, payload: data[0] });
+            setValues(data[0]);
+          } else {
+            uiDispatch({ type: uiTypes.uiSetError, payload: 'Ocurrio un error durante el registro' });
+          }
+        }).catch((error) => {
+          uiDispatch({ type: uiTypes.error, payload: error });
+        });
+    } else {
+      console.log('creating');
+    }
+  }, [params.id]);
+
+  // TODO: Create generic handleSubmit function and wrap it into a custom hook
   const handleSubmit = async (e) => {
     e.preventDefault();
 

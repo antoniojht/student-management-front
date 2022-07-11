@@ -10,6 +10,14 @@ const studentReducer = (state = {}, action) => {
       return {
         users: action.payload,
       };
+    case types.get:
+      return {
+        user: action.payload,
+      };
+    case types.set:
+      return {
+        user: action.payload,
+      };
     default:
       return state;
   }

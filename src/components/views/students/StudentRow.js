@@ -5,7 +5,7 @@ function StudentRow({
 }) {
   const navigate = useNavigate();
   return (
-    <tr key={email}>
+    <tr key={email} className="hover:bg-gray-100 cursor-pointer" onClick={() => navigate(`/student/${_id}`, { replace: true })}>
       <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
         <div className="flex items-center">
           <div className="flex-shrink-0 w-10 h-10">

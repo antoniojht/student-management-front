@@ -33,9 +33,7 @@ function Groups() {
       </p>
 
       <div className="flex justify-between m-8">
-        <div className="mt-8">
-          <Search />
-        </div>
+        <Search />
         <div>
           <button
             type="button"
