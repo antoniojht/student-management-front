@@ -28,6 +28,10 @@
   .label-form {
     @apply mb-3 block text-base font-medium text-[#07074D]
   }
+
+  .input-form {
+    @apply w-full shadow-md rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-indigo-600
+  }
 }
 
 a {

@@ -8,7 +8,7 @@ import Subject from '../../components/views/subjects/subject/Subject';
 
 function DashboardRoute() {
   return (
-    <div className="container">
+    <div className="container max-h-screen overflow-y-auto">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="students" element={<Students />} />

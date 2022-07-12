@@ -21,13 +21,12 @@ function Student() {
   const navigate = useNavigate();
   const params = useParams();
 
-  // Show: email, name, surname, telephone, course, activo, scores, payments
   const [formValues, setValues, handleInputChange, handleToggleChange] = useForm({
-    name: '', surname: '', telephone: '', email: '', active: false,
+    name: '', surname: '', telephone: '', email: '', active: false, course: [], payment: [], score: [],
   });
 
   const {
-    name, surname, telephone, email, active,
+    name, surname, telephone, email, active, course, score, payment,
   } = formValues;
 
   useEffect(() => {
@@ -89,7 +88,7 @@ function Student() {
               value={name}
               onChange={handleInputChange}
               placeholder="Nombre"
-              className="w-full shadow-md rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-indigo-600"
+              className="input-form"
             />
           </div>
           <div className="mb-5">
@@ -106,7 +105,7 @@ function Student() {
               value={surname}
               onChange={handleInputChange}
               placeholder="Apellidos"
-              className="w-full shadow-md rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-indigo-600"
+              className="input-form"
             />
           </div>
           <div className="mb-5">
@@ -123,7 +122,7 @@ function Student() {
               value={telephone}
               onChange={handleInputChange}
               placeholder="Telefono"
-              className="w-full shadow-md rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-indigo-600"
+              className="input-form"
             />
           </div>
           <div className="mb-5">
@@ -140,19 +139,156 @@ function Student() {
               value={email}
               onChange={handleInputChange}
               placeholder="ejemplo@dominio.com"
-              className="w-full shadow-md rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-indigo-600 focus:shadow-md"
+              className="input-form focus:shadow-md"
             />
           </div>
           {!creating && (
-            <div className="mb-8">
-              <label htmlFor="toggle" className="label-form">Activo</label>
-              <input type="checkbox" name="active" id="toggle" className="py-3 px-3 rounded-full shadow-md checked:bg-blue-500 cursor-pointer" checked={active} onChange={handleToggleChange} value={active} />
-            </div>
+            <>
+              <div className="mb-8">
+                <label htmlFor="toggle" className="text-sm font-medium text-gray-700 mr-4 align-super">Activo</label>
+                <input type="checkbox" name="active" id="toggle" className="py-3 px-3 rounded-full shadow-md checked:bg-blue-500 cursor-pointer" checked={active} onChange={handleToggleChange} value={active} />
+              </div>
+              <div className="mb-8">
+                <label htmlFor="course" className="label-form">Cursos</label>
+                <table className="w-full">
+                  <thead>
+                    <tr>
+                      <th className="text-left px-3 py-2"> </th>
+                      <th className="text-left px-3 py-2"> </th>
+                      <th className="text-left px-3 py-2"> </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {course.map((item) => (
+                      <tr key={item.id}>
+                        <td className="text-left px-4 py-2">
+                          <span className="text-sm font-medium text-gray-700">
+                            {item.name}
+                          </span>
+                        </td>
+                        <td className="text-left px-3 py-2">
+                          <span className="text-sm font-medium text-gray-700">
+                            {item.grade}
+                          </span>
+                        </td>
+                        <td className="text-left px-4 py-2">
+                          <div className="flex justify-evenly">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <button className="main-button" type="button">Añadir curso</button>
+              </div>
+              <div className="mb-8">
+                <label htmlFor="payments" className="label-form">Puntuaciones</label>
+                <table className="w-full">
+                  <thead>
+                    <tr>
+                      <th className="text-left px-4 py-2">
+                        <span className="text-sm font-medium text-gray-700">
+                          Trimestre
+                        </span>
+                      </th>
+                      <th className="text-left px-4 py-2">
+                        <span className="text-sm font-medium text-gray-700">
+                          Puntuacion
+                        </span>
+                      </th>
+                      <th className="text-left px-4 py-2">
+                        <span className="text-sm font-medium text-gray-700">
+                          Asignatura
+                        </span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {score.map((p) => (
+                      <tr key={p.id}>
+                        <td className="text-left px-4 py-2">
+                          <span className="text-sm font-medium text-gray-700">
+                            {p.quarter}
+                          </span>
+                        </td>
+                        <td className="text-left px-4 py-2">
+                          <span className="text-sm font-medium text-gray-700">
+                            {p.score}
+                          </span>
+                        </td>
+                        <td className="text-left px-4 py-2">
+                          <span className="text-sm font-medium text-gray-700">
+                            {p.subject[0]?.name}
+                            {' '}
+                            -
+                            {' '}
+                            {p.subject[0]?.grade}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <button className="main-button" type="button">Añadir nota</button>
+              </div>
+              <div className="mb-8">
+                <label htmlFor="payments" className="label-form">Pagos</label>
+                <table className="w-full">
+                  <thead>
+                    <tr>
+                      <th className="text-left px-4 py-2">
+                        <span className="text-sm font-medium text-gray-700">
+                          Fecha
+                        </span>
+                      </th>
+                      <th className="text-left px-4 py-2">
+                        <span className="text-sm font-medium text-gray-700">
+                          Pagado
+                        </span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {payment.map((p) => (
+                      <tr key={p.id}>
+                        <td className="text-left px-4 py-2">
+                          <span className="text-sm font-medium text-gray-700">
+                            {p.date_class.split('T')[0]}
+                          </span>
+                        </td>
+                        <td className="text-left px-4 py-2">
+                          <span className="text-sm font-medium text-gray-700">
+                            {p.paid ? 'Si' : 'No'}
+                          </span>
+                        </td>
+                        <td className="text-left px-4 py-2">
+                          <div className="flex justify-evenly">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <button className="main-button" type="button">Añadir Pago</button>
+              </div>
+            </>
           )}
-          <div>
+          <div className="flex justify-end">
             <button
               type="submit"
-              className="main-button"
+              className="main-button mt-8"
             >
               Aceptar
             </button>
