@@ -1,28 +1,21 @@
 import {
-  useContext, useEffect, useReducer, useState,
+  useEffect, useState, useReducer,
 } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { SUCCESS } from '../../../../consts/consts';
-import AuthContext from '../../../../context/authContext';
+import { useParams } from 'react-router-dom';
 import useForm from '../../../../hooks/useForm';
-import { create, getById } from '../../../../utils/services/students';
-import uiTypes from '../../../../types/uiTypes';
-import studentTypes from '../../../../types/studentTypes';
 import uiReducer from '../../../../utils/reducers/uiReducer';
 import Loading from '../../../common/Loading/Loading';
 import Error from '../../../common/Error/Error';
-import studentReducer from '../../../../utils/reducers/studentReducer';
 import StudentCourse from './StudentCourse';
 import StudentScore from './StudentScore';
 import StudentPayment from './StudentPayment';
+import useUser from '../../../../hooks/useUser';
 
 function Student() {
   const [creating, setCreating] = useState(false);
-  const { user, dispatch } = useContext(AuthContext);
-  const [uiState, uiDispatch] = useReducer(uiReducer, {});
-  const [, stateDispatch] = useReducer(studentReducer, {});
-  const navigate = useNavigate();
+  const [uiState] = useReducer(uiReducer, {});
   const params = useParams();
+  const { createUser, editUser } = useUser();
 
   const [formValues, setValues, handleInputChange, handleToggleChange] = useForm({
     name: '', surname: '', telephone: '', email: '', active: false, course: [], payment: [], score: [],
@@ -34,41 +27,15 @@ function Student() {
 
   useEffect(() => {
     if (params.id) {
-      getById(params.id, user.token)
-        .then((response) => {
-          const { status, data } = response;
-          if (status === SUCCESS) {
-            uiDispatch({ type: uiTypes.uiRemoveError });
-            stateDispatch({ type: studentTypes.set, payload: data[0] });
-            setValues(data[0]);
-          } else {
-            uiDispatch({ type: uiTypes.uiSetError, payload: 'Ocurrio un error durante el registro' });
-          }
-        }).catch((error) => {
-          uiDispatch({ type: uiTypes.error, payload: error });
-        });
+      editUser(params.id, setValues);
     } else {
-      console.log('creating');
       setCreating(true);
     }
   }, [params.id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    uiDispatch({ type: uiTypes.uiStartLoading });
-
-    const newUser = await create(formValues, user.token);
-
-    if (newUser.status === SUCCESS) {
-      dispatch({ type: studentTypes.create, user: newUser.data });
-      uiDispatch({ type: uiTypes.uiRemoveError });
-      navigate('/students', { replace: true });
-    } else {
-      uiDispatch({ type: uiTypes.uiSetError, payload: 'Ocurrio un error durante el registro' });
-    }
-
-    uiDispatch({ type: uiTypes.uiFinishLoading });
+    createUser(formValues);
   };
 
   return (
@@ -164,7 +131,7 @@ function Student() {
                   <tbody>
                     {
                       course.map((item) => (
-                        <StudentCourse key={item.id} item={item} />
+                        <StudentCourse key={item._id} item={item} />
                       ))
                     }
                   </tbody>
@@ -195,7 +162,7 @@ function Student() {
                   </thead>
                   <tbody>
                     {score.map((p) => (
-                      <StudentScore key={p.id} score={p} />
+                      <StudentScore key={p._id} score={p} />
                     ))}
                   </tbody>
                 </table>
@@ -220,7 +187,7 @@ function Student() {
                   </thead>
                   <tbody>
                     {payment.map((p) => (
-                      <StudentPayment key={p.id} payment={p} />
+                      <StudentPayment key={p._id} payment={p} />
                     ))}
                   </tbody>
                 </table>

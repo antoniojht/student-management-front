@@ -86,7 +86,7 @@ function Students() {
               </thead>
               <tbody className="bg-white">
                 {state.users?.map((student) => (
-                  <StudentRow {...student} />
+                  <StudentRow key={student._id} {...student} />
                 ))}
               </tbody>
             </table>
