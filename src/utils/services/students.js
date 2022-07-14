@@ -45,3 +45,16 @@ export const getById = async (id, token) => {
 
   return response.json();
 };
+
+export const editUser = (values, token) => {
+  const requestOptions = {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(values),
+  };
+
+  return fetch(`${BACKEND_URL}/user/edit`, requestOptions);
+};

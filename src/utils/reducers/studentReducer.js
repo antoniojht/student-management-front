@@ -14,7 +14,7 @@ const studentReducer = (state = {}, action) => {
       return {
         user: action.payload,
       };
-    case types.set:
+    case types.edit:
       return {
         user: action.payload,
       };

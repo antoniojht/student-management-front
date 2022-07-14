@@ -1,21 +1,27 @@
 import {
   useEffect, useState, useReducer,
 } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import useForm from '../../../../hooks/useForm';
 import uiReducer from '../../../../utils/reducers/uiReducer';
-import Loading from '../../../common/Loading/Loading';
 import Error from '../../../common/Error/Error';
 import StudentCourse from './StudentCourse';
 import StudentScore from './StudentScore';
 import StudentPayment from './StudentPayment';
 import useUser from '../../../../hooks/useUser';
+import Modal from '../../../common/Modal/Modal';
 
 function Student() {
   const [creating, setCreating] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [message, setMessage] = useState('');
   const [uiState] = useReducer(uiReducer, {});
   const params = useParams();
-  const { createUser, editUser } = useUser();
+  const navigate = useNavigate();
+
+  const {
+    createUser, getUser, edit,
+  } = useUser();
 
   const [formValues, setValues, handleInputChange, handleToggleChange] = useForm({
     name: '', surname: '', telephone: '', email: '', active: false, course: [], payment: [], score: [],
@@ -27,7 +33,7 @@ function Student() {
 
   useEffect(() => {
     if (params.id) {
-      editUser(params.id, setValues);
+      getUser(params.id, setValues);
     } else {
       setCreating(true);
     }
@@ -35,13 +41,24 @@ function Student() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    createUser(formValues);
+    if (creating) {
+      createUser(formValues);
+      setMessage('El estudiante se creo correctamente');
+    } else {
+      edit(formValues);
+      setMessage('El estudiante se edito correctamente');
+    }
+    setIsOpen(true);
+  };
+
+  const navigateToStudent = () => {
+    navigate('/students', { replace: true });
   };
 
   return (
     <>
+      {isOpen && <Modal header="Alumno" body={message} setIsOpen={setIsOpen} navigate={navigateToStudent} />}
       {uiState.msgError && <Error />}
-      {uiState.loading && <Loading />}
       <div className="mx-auto m-8 w-full max-w-[550px]">
         <form onSubmit={handleSubmit}>
           <div className="mb-5">
@@ -59,6 +76,7 @@ function Student() {
               onChange={handleInputChange}
               placeholder="Nombre"
               className="input-form"
+              required
             />
           </div>
           <div className="mb-5">
@@ -76,6 +94,7 @@ function Student() {
               onChange={handleInputChange}
               placeholder="Apellidos"
               className="input-form"
+              required
             />
           </div>
           <div className="mb-5">
@@ -93,6 +112,7 @@ function Student() {
               onChange={handleInputChange}
               placeholder="Telefono"
               className="input-form"
+              required
             />
           </div>
           <div className="mb-5">
@@ -110,6 +130,7 @@ function Student() {
               onChange={handleInputChange}
               placeholder="ejemplo@dominio.com"
               className="input-form focus:shadow-md"
+              required
             />
           </div>
           {!creating && (
