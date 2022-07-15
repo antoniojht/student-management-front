@@ -15,16 +15,16 @@ import StudentRow from './StudentRow';
 function Students() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [state, dispatch] = useReducer(studentReducer, {});
+  const [state, dispatch] = useReducer(studentReducer);
   const [increment, decrement, skip, limit] = usePagination();
 
   useEffect(() => {
     list(skip, limit, user.token).then((response) => {
       if (response.status === SUCCESS) {
-        dispatch({ type: types.list, payload: response.data });
+        dispatch({ type: types.setList, payload: response.data });
       }
     });
-  }, [state.users]);
+  }, [skip, limit]);
 
   return (
     <>
@@ -85,7 +85,7 @@ function Students() {
                 </tr>
               </thead>
               <tbody className="bg-white">
-                {state.users?.map((student) => (
+                {state?.users.map((student) => (
                   <StudentRow key={student._id} {...student} />
                 ))}
               </tbody>

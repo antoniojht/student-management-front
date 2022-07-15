@@ -58,3 +58,18 @@ export const editUser = (values, token) => {
 
   return fetch(`${BACKEND_URL}/user/edit`, requestOptions);
 };
+
+export const removeStudentFromSubject = async (email, subject, token) => {
+  const requestOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ email, subject }),
+  };
+
+  const response = await fetch(`${BACKEND_URL}/user/removeStudentFromSubject`, requestOptions);
+
+  return response.json();
+};

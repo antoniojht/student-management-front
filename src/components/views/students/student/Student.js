@@ -1,5 +1,5 @@
 import {
-  useEffect, useState, useReducer,
+  useEffect, useState, useReducer, useContext,
 } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import useForm from '../../../../hooks/useForm';
@@ -10,8 +10,16 @@ import StudentScore from './StudentScore';
 import StudentPayment from './StudentPayment';
 import useUser from '../../../../hooks/useUser';
 import Modal from '../../../common/Modal/Modal';
+import { getById, removeStudentFromSubject } from '../../../../utils/services/students';
+import AuthContext from '../../../../context/authContext';
+import { SUCCESS } from '../../../../consts/consts';
 
 function Student() {
+  const initialState = {
+    name: '', surname: '', telephone: '', email: '', active: false, course: [], payment: [], score: [],
+  };
+
+  const { user } = useContext(AuthContext);
   const [creating, setCreating] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
@@ -20,39 +28,67 @@ function Student() {
   const navigate = useNavigate();
 
   const {
-    createUser, getUser, edit,
+    createUser, edit,
   } = useUser();
 
-  const [formValues, setValues, handleInputChange, handleToggleChange] = useForm({
-    name: '', surname: '', telephone: '', email: '', active: false, course: [], payment: [], score: [],
-  });
-
-  const {
-    name, surname, telephone, email, active, course, score, payment,
-  } = formValues;
+  const [values, handleInputChange, handleToggleChange, setValues] = useForm(initialState);
 
   useEffect(() => {
     if (params.id) {
-      getUser(params.id, setValues);
+      getById(params.id, user.token).then((response) => {
+        const { status, data } = response;
+        if (status === SUCCESS) {
+          setValues(data[0]);
+          setMessage('');
+        } else {
+          setMessage('Ocurrio un error durante la carga de datos');
+        }
+      });
     } else {
       setCreating(true);
     }
-  }, [params.id]);
+  }, []);
+
+  const {
+    name, surname, telephone, email, active, course, score, payment,
+  } = values;
+
+  const removeCourse = async (subject) => {
+    const removedCourse = await removeStudentFromSubject(email, subject, user.token);
+
+    if (removedCourse.status === SUCCESS || removedCourse.status === 200) {
+      const index = removedCourse.data.course.indexOf(subject);
+      if (index > -1) {
+        removedCourse.data.course.splice(index, 1);
+      }
+      setValues({ ...values, course: removedCourse.data.course });
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (creating) {
-      createUser(formValues);
-      setMessage('El estudiante se creo correctamente');
+      createUser(values);
+      setMessage(
+        (uiState.msgError)
+          ? 'Hay errores en el formulario'
+          : 'El estudiante se creo correctamente',
+      );
     } else {
-      edit(formValues);
-      setMessage('El estudiante se edito correctamente');
+      edit(values);
+      setMessage(
+        (uiState.msgError)
+          ? 'Hay errores en el formulario'
+          : 'El estudiante se edito correctamente',
+      );
     }
     setIsOpen(true);
   };
 
   const navigateToStudent = () => {
-    navigate('/students', { replace: true });
+    if (!uiState.msgError) {
+      navigate('/students', { replace: true });
+    }
   };
 
   return (
@@ -152,7 +188,13 @@ function Student() {
                   <tbody>
                     {
                       course.map((item) => (
-                        <StudentCourse key={item._id} item={item} />
+                        <StudentCourse
+                          key={item._id}
+                          item={item}
+                          removeCourse={() => {
+                            removeCourse(item._id);
+                          }}
+                        />
                       ))
                     }
                   </tbody>
@@ -208,7 +250,10 @@ function Student() {
                   </thead>
                   <tbody>
                     {payment.map((p) => (
-                      <StudentPayment key={p._id} payment={p} />
+                      <StudentPayment
+                        key={p._id}
+                        payment={p}
+                      />
                     ))}
                   </tbody>
                 </table>

@@ -1,5 +1,7 @@
 import { useContext, useReducer } from 'react';
-import { create, getById, editUser } from '../utils/services/students';
+import {
+  create, editUser, removeStudentFromSubject,
+} from '../utils/services/students';
 import { SUCCESS } from '../consts/consts';
 import uiTypes from '../types/uiTypes';
 import studentTypes from '../types/studentTypes';
@@ -10,36 +12,20 @@ import studentReducer from '../utils/reducers/studentReducer';
 const useUser = () => {
   const { user } = useContext(AuthContext);
   const [, uiDispatch] = useReducer(uiReducer, {});
-  const [, studentDispatch] = useReducer(studentReducer, {});
+  const [studentState, studentDispatch] = useReducer(studentReducer);
 
   const createUser = async (newUser) => {
     uiDispatch({ type: uiTypes.uiStartLoading });
     const userCreated = await create(newUser, user.token);
 
     if (userCreated.status === SUCCESS) {
-      studentDispatch({ type: studentTypes.create, user: userCreated.data });
+      studentDispatch({ type: studentTypes.set, user: userCreated.data });
       uiDispatch({ type: uiTypes.uiRemoveError });
     } else {
       uiDispatch({ type: uiTypes.uiSetError, payload: 'Ocurrio un error durante el registro' });
     }
 
     uiDispatch({ type: uiTypes.uiFinishLoading });
-  };
-
-  const getUser = (id, setValues) => {
-    getById(id, user.token)
-      .then((response) => {
-        const { status, data } = response;
-        if (status === SUCCESS) {
-          uiDispatch({ type: uiTypes.uiRemoveError });
-          studentDispatch({ type: studentTypes.set, payload: data[0] });
-          setValues(data[0]);
-        } else {
-          uiDispatch({ type: uiTypes.uiSetError, payload: 'Ocurrio un error durante el registro' });
-        }
-      }).catch((error) => {
-        uiDispatch({ type: uiTypes.error, payload: error });
-      });
   };
 
   const edit = async (values) => {
@@ -56,8 +42,28 @@ const useUser = () => {
     uiDispatch({ type: uiTypes.uiFinishLoading });
   };
 
+  const removeCourse = async (subject) => {
+    uiDispatch({ type: uiTypes.uiStartLoading });
+    const { email } = studentState.user;
+
+    const removedCourse = await removeStudentFromSubject(email, subject, user.token);
+
+    if (removedCourse.status === SUCCESS || removedCourse.status === 200) {
+      const index = removedCourse.data.course.indexOf(subject);
+      if (index > -1) {
+        removedCourse.data.course.splice(index, 1);
+      }
+      studentDispatch({ type: studentTypes.edit, user: removedCourse.data });
+      uiDispatch({ type: uiTypes.uiRemoveError });
+    } else {
+      uiDispatch({ type: uiTypes.uiSetError, payload: 'Ocurrio un error durante la edicion' });
+    }
+
+    uiDispatch({ type: uiTypes.uiFinishLoading });
+  };
+
   return {
-    createUser, getUser, edit,
+    createUser, edit, removeCourse,
   };
 };
 
