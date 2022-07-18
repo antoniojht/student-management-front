@@ -28,7 +28,9 @@ function Student() {
   const params = useParams();
   const navigate = useNavigate();
 
-  const [values, handleInputChange, handleToggleChange, setValues] = useForm(initialState);
+  const {
+    values, handleInputChange, handleToggleChange, setValues,
+  } = useForm(initialState);
 
   useEffect(() => {
     if (params.id) {

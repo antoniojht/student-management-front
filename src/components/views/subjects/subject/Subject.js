@@ -1,57 +1,85 @@
-import { useContext, useEffect, useReducer } from 'react';
+import {
+  useContext, useEffect, useState,
+} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { SUCCESS } from '../../../../consts/consts';
 import AuthContext from '../../../../context/authContext';
 import useForm from '../../../../hooks/useForm';
-import { create } from '../../../../utils/services/subjects';
-import uiTypes from '../../../../types/uiTypes';
-import subjectTypes from '../../../../types/subjectTypes';
-import uiReducer from '../../../../utils/reducers/uiReducer';
-import Loading from '../../../common/Loading/Loading';
+import { create, edit, getById } from '../../../../utils/services/subjects';
 import Error from '../../../common/Error/Error';
+import Modal from '../../../common/Modal/Modal';
 
 function Student() {
-  const { user, dispatch } = useContext(AuthContext);
-  const [uiState, uiDispatch] = useReducer(uiReducer, {});
-  const navigate = useNavigate();
+  const initialState = {
+    name: '', grade: '',
+  };
+
+  const { user } = useContext(AuthContext);
+
   const params = useParams();
+  const navigate = useNavigate();
+
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const { values, handleInputChange, setValues } = useForm(initialState);
 
   useEffect(() => {
     if (params.id) {
-      console.log('editing');
+      getById(params.id, user.token).then((response) => {
+        if (response.status === SUCCESS) {
+          setValues(response.data);
+          setMessage('');
+        } else {
+          setMessage('Ocurrio un error durante la carga de datos');
+          setError(true);
+        }
+      });
     } else {
-      console.log('creating');
+      setCreating(true);
     }
-  }, [params.id]);
+  }, []);
 
-  const [formValues, handleInputChange] = useForm({
-    name: '', grade: '',
-  });
-
-  const { name, grade } = formValues;
+  const { name, grade } = values;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    uiDispatch({ type: uiTypes.uiStartLoading });
+    if (creating) {
+      const subjectCreated = await create(values, user.token);
 
-    const newSubject = await create(formValues, user.token);
-
-    if (newSubject.status === SUCCESS) {
-      dispatch({ type: subjectTypes.create, user: newSubject.data });
-      uiDispatch({ type: uiTypes.uiRemoveError });
-      navigate('/subjects', { replace: true });
+      if (subjectCreated.status === SUCCESS) {
+        setMessage('Asignatura creada correctamente');
+      } else {
+        setMessage('Ocurrio un error durante la creación de la asignatura');
+        setError(true);
+      }
     } else {
-      uiDispatch({ type: uiTypes.uiSetError, payload: 'Ocurrio un error durante el registro' });
+      const userEdited = await edit(values, user.token);
+
+      if (userEdited.status === SUCCESS) {
+        setMessage('Asignatura editada correctamente');
+      } else {
+        setMessage('Ocurrio un error durante la edición de la asignatura');
+        setError(true);
+      }
     }
 
-    uiDispatch({ type: uiTypes.uiFinishLoading });
+    setIsOpen(true);
+  };
+
+  const navigateToSubjects = () => {
+    if (!error) {
+      navigate('/subjects', { replace: true });
+    }
   };
 
   return (
     <>
-      {uiState.msgError && <Error />}
-      {uiState.loading && <Loading />}
+      {isOpen && <Modal header="Asignatura" body={message} setIsOpen={setIsOpen} navigate={navigateToSubjects} />}
+      {error && <Error />}
       <div className="mx-auto m-8 w-full max-w-[550px]">
         <form onSubmit={handleSubmit}>
           <div className="mb-5">

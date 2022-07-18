@@ -1,13 +1,11 @@
 import {
-  useContext, useEffect, useReducer,
+  useContext, useEffect, useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Search from '../../common/Search/Search';
-import groupReducer from '../../../utils/reducers/groupReducer';
 import { list } from '../../../utils/services/groups';
 import AuthContext from '../../../context/authContext';
 import { SUCCESS } from '../../../consts/consts';
-import types from '../../../types/groupTypes';
 import Pagination from '../../common/Pagination/Pagination';
 import usePagination from '../../../hooks/usePagination';
 import GroupRow from './GroupRow';
@@ -15,16 +13,16 @@ import GroupRow from './GroupRow';
 function Groups() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [state, dispatch] = useReducer(groupReducer, {});
+  const [groups, setGroups] = useState([]);
   const [increment, decrement, skip, limit] = usePagination();
 
   useEffect(() => {
     list(skip, limit, user.token).then((response) => {
       if (response.status === SUCCESS) {
-        dispatch({ type: types.list, payload: response.data });
+        setGroups(response.data);
       }
     });
-  }, [state]);
+  }, [skip, limit]);
 
   return (
     <>
@@ -65,8 +63,8 @@ function Groups() {
                 </tr>
               </thead>
               <tbody className="bg-white">
-                {state.groups?.map((group) => (
-                  <GroupRow {...group} />
+                {groups.map((group) => (
+                  <GroupRow key={group._id} {...group} />
                 ))}
               </tbody>
             </table>

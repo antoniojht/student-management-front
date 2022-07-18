@@ -28,3 +28,32 @@ export const list = async (skip = 1, limit = 5, token) => {
 
   return response.json();
 };
+
+export const getById = async (id, token) => {
+  const requestOptions = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const response = await fetch(`${BACKEND_URL}/subject/getById?id=${id}`, requestOptions);
+
+  return response.json();
+};
+
+export const edit = async (subject, token) => {
+  const requestOptions = {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(subject),
+  };
+
+  const response = await fetch(`${BACKEND_URL}/subject/edit`, requestOptions);
+
+  return response.json();
+};
