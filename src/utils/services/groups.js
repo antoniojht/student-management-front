@@ -28,3 +28,32 @@ export const list = async (skip = 1, limit = 5, token) => {
 
   return response.json();
 };
+
+export const listMembersByGroup = async (name, token) => {
+  const requestOptions = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const response = await fetch(`${BACKEND_URL}/group/listMembers?name=${name}`, requestOptions);
+
+  return response.json();
+};
+
+export const removeStudentFromGroup = async (name, studentId, token) => {
+  const requestOptions = {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ name, studentId }),
+  };
+
+  const response = await fetch(`${BACKEND_URL}/group/removeStudentFromGroup`, requestOptions);
+
+  return response.json();
+};
