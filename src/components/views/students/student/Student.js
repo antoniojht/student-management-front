@@ -1,16 +1,16 @@
 import {
-  useEffect, useState, useReducer, useContext,
+  useEffect, useState, useContext,
 } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import useForm from '../../../../hooks/useForm';
-import uiReducer from '../../../../utils/reducers/uiReducer';
 import Error from '../../../common/Error/Error';
 import StudentCourse from './StudentCourse';
 import StudentScore from './StudentScore';
 import StudentPayment from './StudentPayment';
-import useUser from '../../../../hooks/useUser';
 import Modal from '../../../common/Modal/Modal';
-import { getById, removeStudentFromSubject } from '../../../../utils/services/students';
+import {
+  getById, removeStudentFromSubject, create, editUser,
+} from '../../../../utils/services/students';
 import AuthContext from '../../../../context/authContext';
 import { SUCCESS } from '../../../../consts/consts';
 
@@ -20,16 +20,13 @@ function Student() {
   };
 
   const { user } = useContext(AuthContext);
-  const [creating, setCreating] = useState(false);
+
   const [isOpen, setIsOpen] = useState(false);
+  const [creating, setCreating] = useState(false);
   const [message, setMessage] = useState('');
-  const [uiState] = useReducer(uiReducer, {});
+  const [error, setError] = useState(false);
   const params = useParams();
   const navigate = useNavigate();
-
-  const {
-    createUser, edit,
-  } = useUser();
 
   const [values, handleInputChange, handleToggleChange, setValues] = useForm(initialState);
 
@@ -42,6 +39,7 @@ function Student() {
           setMessage('');
         } else {
           setMessage('Ocurrio un error durante la carga de datos');
+          setError(true);
         }
       });
     } else {
@@ -62,31 +60,38 @@ function Student() {
         removedCourse.data.course.splice(index, 1);
       }
       setValues({ ...values, course: removedCourse.data.course });
+    } else {
+      setError(true);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (creating) {
-      createUser(values);
-      setMessage(
-        (uiState.msgError)
-          ? 'Hay errores en el formulario'
-          : 'El estudiante se creo correctamente',
-      );
+      const userCreated = await create(values, user.token);
+
+      if (userCreated.status === SUCCESS) {
+        setMessage('Usuario creado correctamente');
+      } else {
+        setMessage('Ocurrio un error durante la creación del usuario');
+        setError(true);
+      }
     } else {
-      edit(values);
-      setMessage(
-        (uiState.msgError)
-          ? 'Hay errores en el formulario'
-          : 'El estudiante se edito correctamente',
-      );
+      const userEdited = await editUser(values, user.token);
+
+      if (userEdited.status === 200) {
+        setMessage('Usuario editado correctamente');
+      } else {
+        setMessage('Ocurrio un error durante la edición del usuario');
+        setError(true);
+      }
     }
     setIsOpen(true);
   };
 
   const navigateToStudent = () => {
-    if (!uiState.msgError) {
+    if (!error) {
       navigate('/students', { replace: true });
     }
   };
@@ -94,7 +99,7 @@ function Student() {
   return (
     <>
       {isOpen && <Modal header="Alumno" body={message} setIsOpen={setIsOpen} navigate={navigateToStudent} />}
-      {uiState.msgError && <Error />}
+      {error && <Error />}
       <div className="mx-auto m-8 w-full max-w-[550px]">
         <form onSubmit={handleSubmit}>
           <div className="mb-5">
@@ -176,7 +181,7 @@ function Student() {
                 <input type="checkbox" name="active" id="toggle" className="py-3 px-3 rounded-full shadow-md checked:bg-blue-500 cursor-pointer" checked={active} onChange={handleToggleChange} value={active} />
               </div>
               <div className="mb-8">
-                <label htmlFor="course" className="label-form">Cursos</label>
+                <label htmlFor="course" className="label-form">Asignaturas</label>
                 <table className="w-full">
                   <thead>
                     <tr>
@@ -199,7 +204,7 @@ function Student() {
                     }
                   </tbody>
                 </table>
-                <button className="main-button" type="button">Añadir curso</button>
+                <button className="main-button" type="button">Añadir asignatura</button>
               </div>
               <div className="mb-8">
                 <label htmlFor="payments" className="label-form">Puntuaciones</label>
