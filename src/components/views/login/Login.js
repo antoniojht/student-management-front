@@ -8,11 +8,11 @@ function Login() {
   const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [formValues, handleInputChange] = useForm({
+  const { values, handleInputChange } = useForm({
     email: '', password: '',
   });
 
-  const { email, password } = formValues;
+  const { email, password } = values;
 
   const handleLogin = async (e) => {
     e.preventDefault();
