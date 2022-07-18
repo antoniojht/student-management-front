@@ -1,13 +1,11 @@
 import {
-  useContext, useEffect, useReducer,
+  useContext, useEffect, useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Search from '../../common/Search/Search';
-import studentReducer from '../../../utils/reducers/studentReducer';
-import { list } from '../../../utils/services/students';
+import { list, searchContainName } from '../../../utils/services/students';
 import AuthContext from '../../../context/authContext';
 import { SUCCESS } from '../../../consts/consts';
-import types from '../../../types/studentTypes';
 import Pagination from '../../common/Pagination/Pagination';
 import usePagination from '../../../hooks/usePagination';
 import StudentRow from './StudentRow';
@@ -15,16 +13,30 @@ import StudentRow from './StudentRow';
 function Students() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [state, dispatch] = useReducer(studentReducer);
+  const [students, setStudents] = useState([]);
   const [increment, decrement, skip, limit] = usePagination();
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
-    list(skip, limit, user.token).then((response) => {
-      if (response.status === SUCCESS) {
-        dispatch({ type: types.setList, payload: response.data });
-      }
-    });
-  }, [skip, limit]);
+    if (!isSearching) {
+      list(skip, limit, user.token).then((response) => {
+        if (response.status === SUCCESS) {
+          setStudents(response.data);
+        }
+      });
+    }
+  }, [skip, limit, isSearching]);
+
+  const search = (e) => {
+    if (e.target.value.length > 0) {
+      searchContainName(e.target.value, user.token).then((response) => {
+        setStudents(response.data);
+        setIsSearching(true);
+      });
+    } else {
+      setIsSearching(false);
+    }
+  };
 
   return (
     <>
@@ -34,7 +46,7 @@ function Students() {
 
       <div className="flex justify-between m-8">
         <div className="mt-8">
-          <Search />
+          <Search search={search} />
         </div>
         <div>
           <label
@@ -85,7 +97,7 @@ function Students() {
                 </tr>
               </thead>
               <tbody className="bg-white">
-                {state?.users.map((student) => (
+                {students.map((student) => (
                   <StudentRow key={student._id} {...student} />
                 ))}
               </tbody>
@@ -93,7 +105,7 @@ function Students() {
           </div>
         </div>
       </div>
-      <Pagination increment={increment} decrement={decrement} />
+      {!isSearching && <Pagination increment={increment} decrement={decrement} />}
     </>
   );
 }

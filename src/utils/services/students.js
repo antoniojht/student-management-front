@@ -73,3 +73,17 @@ export const removeStudentFromSubject = async (email, subject, token) => {
 
   return response.json();
 };
+
+export const searchContainName = async (name, token) => {
+  const requestOptions = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const response = await fetch(`${BACKEND_URL}/user/searchContainName?name=${name}`, requestOptions);
+
+  return response.json();
+};
