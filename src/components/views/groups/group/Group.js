@@ -5,7 +5,9 @@ import useForm from '../../../../hooks/useForm';
 import Modal from '../../../common/Modal/Modal';
 import Error from '../../../common/Error/Error';
 import { SUCCESS } from '../../../../consts/consts';
-import { create, listMembersByGroup, removeStudentFromGroup } from '../../../../utils/services/groups';
+import {
+  create, listMembersByGroup, removeStudentFromGroup, editGroup,
+} from '../../../../utils/services/groups';
 import GroupMember from './GroupMember';
 
 function Group() {
@@ -48,23 +50,23 @@ function Group() {
     e.preventDefault();
 
     if (creating) {
-      const userCreated = await create(values, user.token);
+      const groupCreated = await create(values, user.token);
 
-      if (userCreated.status === SUCCESS) {
+      if (groupCreated.status === SUCCESS) {
         setMessage('Grupo creado correctamente');
       } else {
         setMessage('Ocurrio un error durante la creación del grupo');
         setError(true);
       }
     } else {
-      // const userEdited = await editGroup(values, user.token);
+      const groupEdited = await editGroup(params.name, name, user.token);
 
-      // if (userEdited.status === 200) {
-      //   setMessage('Usuario editado correctamente');
-      // } else {
-      //   setMessage('Ocurrio un error durante la edición del usuario');
-      //   setError(true);
-      // }
+      if (groupEdited.status === SUCCESS) {
+        setMessage('Grupo editado correctamente');
+      } else {
+        setMessage('Ocurrio un error durante la edición del grupo');
+        setError(true);
+      }
     }
     setIsOpen(true);
   };

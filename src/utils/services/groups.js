@@ -57,3 +57,18 @@ export const removeStudentFromGroup = async (name, studentId, token) => {
 
   return response.json();
 };
+
+export const editGroup = async (name, newName, token) => {
+  const requestOptions = {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ name, newName }),
+  };
+
+  const response = await fetch(`${BACKEND_URL}/group/edit`, requestOptions);
+
+  return response.json();
+};
