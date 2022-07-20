@@ -17,15 +17,17 @@ function Students() {
   const [increment, decrement, skip, limit] = usePagination();
   const [isSearching, setIsSearching] = useState(false);
 
+  const [order, setOrder] = useState('name');
+
   useEffect(() => {
     if (!isSearching) {
-      list(skip, limit, user.token).then((response) => {
+      list(skip, limit, user.token, order).then((response) => {
         if (response.status === SUCCESS) {
           setStudents(response.data);
         }
       });
     }
-  }, [skip, limit, isSearching]);
+  }, [skip, limit, isSearching, order]);
 
   const search = (e) => {
     if (e.target.value.length > 0) {
@@ -36,6 +38,10 @@ function Students() {
     } else {
       setIsSearching(false);
     }
+  };
+
+  const handleOrder = (e) => {
+    setOrder(e.target.value);
   };
 
   return (
@@ -55,11 +61,10 @@ function Students() {
           >
             Ordenar por
           </label>
-          <select name="orderBy" className="rounded bg-white px-6 shadow-xl ring-1 ring-gray-900/5 py-2 mr-5">
-            <option>Nombre</option>
-            <option>Apellido</option>
-            <option>Asignatura</option>
-            <option>Fecha</option>
+          <select name={order} onChange={handleOrder} className="rounded bg-white px-6 shadow-xl ring-1 ring-gray-900/5 py-2 mr-5">
+            <option value="name">Nombre</option>
+            <option value="surname">Apellido</option>
+            <option value="date">Fecha</option>
           </select>
           <button
             type="button"

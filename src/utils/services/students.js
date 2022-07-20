@@ -18,7 +18,7 @@ export const create = async (student, token) => {
   return response.json();
 };
 
-export const list = async (skip = 1, limit = 5, token) => {
+export const list = async (skip = 1, limit = 5, token, orderBy = 'name') => {
   const requestOptions = {
     method: 'GET',
     headers: {
@@ -26,8 +26,7 @@ export const list = async (skip = 1, limit = 5, token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-
-  const response = await fetch(`${BACKEND_URL}/user/getStudents?skip=${skip}&limit=${limit}`, requestOptions);
+  const response = await fetch(`${BACKEND_URL}/user/getStudents?skip=${skip}&limit=${limit}&order=${orderBy}`, requestOptions);
 
   return response.json();
 };
