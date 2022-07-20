@@ -3,7 +3,7 @@ import {
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Search from '../../common/Search/Search';
-import { list } from '../../../utils/services/groups';
+import { list, searchContainName } from '../../../utils/services/groups';
 import AuthContext from '../../../context/authContext';
 import { SUCCESS } from '../../../consts/consts';
 import Pagination from '../../common/Pagination/Pagination';
@@ -15,6 +15,7 @@ function Groups() {
   const navigate = useNavigate();
   const [groups, setGroups] = useState([]);
   const [increment, decrement, skip, limit] = usePagination();
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     list(skip, limit, user.token).then((response) => {
@@ -22,7 +23,18 @@ function Groups() {
         setGroups(response.data);
       }
     });
-  }, [skip, limit]);
+  }, [skip, limit, isSearching]);
+
+  const search = (e) => {
+    if (e.target.value.length > 0) {
+      searchContainName(e.target.value, user.token).then((response) => {
+        setGroups(response.data);
+        setIsSearching(true);
+      });
+    } else {
+      setIsSearching(false);
+    }
+  };
 
   return (
     <>
@@ -31,7 +43,7 @@ function Groups() {
       </p>
 
       <div className="flex justify-between m-8">
-        <Search />
+        <Search search={search} />
         <div>
           <button
             type="button"

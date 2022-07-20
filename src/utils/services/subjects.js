@@ -57,3 +57,17 @@ export const edit = async (subject, token) => {
 
   return response.json();
 };
+
+export const searchContainName = async (name, token) => {
+  const requestOptions = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const response = await fetch(`${BACKEND_URL}/subject/searchContainName?name=${name}`, requestOptions);
+
+  return response.json();
+};

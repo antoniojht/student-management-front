@@ -72,3 +72,17 @@ export const editGroup = async (name, newName, token) => {
 
   return response.json();
 };
+
+export const searchContainName = async (name, token) => {
+  const requestOptions = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const response = await fetch(`${BACKEND_URL}/group/searchContainName?name=${name}`, requestOptions);
+
+  return response.json();
+};
