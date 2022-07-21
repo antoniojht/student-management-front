@@ -9,6 +9,7 @@ import { SUCCESS } from '../../../consts/consts';
 import Pagination from '../../common/Pagination/Pagination';
 import usePagination from '../../../hooks/usePagination';
 import StudentRow from './StudentRow';
+import Select from '../../common/Select/Select';
 
 function Students() {
   const { user } = useContext(AuthContext);
@@ -18,6 +19,12 @@ function Students() {
   const [isSearching, setIsSearching] = useState(false);
 
   const [order, setOrder] = useState('name');
+
+  const selectOptions = [
+    { value: 'name', label: 'Nombre' },
+    { value: 'email', label: 'Email' },
+    { value: 'date', label: 'Fecha' },
+  ];
 
   useEffect(() => {
     if (!isSearching) {
@@ -61,11 +68,7 @@ function Students() {
           >
             Ordenar por
           </label>
-          <select name={order} onChange={handleOrder} className="rounded bg-white px-6 shadow-xl ring-1 ring-gray-900/5 py-2 mr-5">
-            <option value="name">Nombre</option>
-            <option value="surname">Apellido</option>
-            <option value="date">Fecha</option>
-          </select>
+          <Select name={order} handleChange={handleOrder} options={selectOptions} />
           <button
             type="button"
             onClick={() => {

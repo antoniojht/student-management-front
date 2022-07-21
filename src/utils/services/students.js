@@ -31,6 +31,19 @@ export const list = async (skip = 1, limit = 5, token, orderBy = 'name') => {
   return response.json();
 };
 
+export const getAll = async (token) => {
+  const requestOptions = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await fetch(`${BACKEND_URL}/user/getAll`, requestOptions);
+
+  return response.json();
+};
+
 export const getById = async (id, token) => {
   const requestOptions = {
     method: 'GET',
