@@ -1,41 +1,14 @@
-import {
-  useContext, useEffect, useState,
-} from 'react';
-import { useNavigate } from 'react-router-dom';
 import Search from '../../common/Search/Search';
-import { list, searchContainName } from '../../../utils/services/subjects';
-import AuthContext from '../../../context/authContext';
-import { SUCCESS } from '../../../consts/consts';
 import Pagination from '../../common/Pagination/Pagination';
 import usePagination from '../../../hooks/usePagination';
 import SubjectRow from './SubjectRow';
+import useSubject from '../../../hooks/useSubject';
 
 function Subjects() {
-  const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
-  const [subjects, setSubjects] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
   const [increment, decrement, skip, limit] = usePagination();
-
-  useEffect(() => {
-    list(skip, limit, user.token).then((response) => {
-      if (response.status === SUCCESS) {
-        setSubjects(response.data);
-      }
-    });
-  }, [skip, limit, isSearching]);
-
-  const search = (e) => {
-    if (e.target.value.length > 0) {
-      searchContainName(e.target.value, user.token).then((response) => {
-        setSubjects(response.data);
-        setIsSearching(true);
-      });
-    } else {
-      setIsSearching(false);
-    }
-  };
-
+  const {
+    navigate, subjects, search, isSearching,
+  } = useSubject(skip, limit);
   return (
     <>
       <p className="text-2xl m-8 ">
@@ -83,7 +56,7 @@ function Subjects() {
           </div>
         </div>
       </div>
-      <Pagination increment={increment} decrement={decrement} />
+      {!isSearching && <Pagination increment={increment} decrement={decrement} />}
     </>
   );
 }

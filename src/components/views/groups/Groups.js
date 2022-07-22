@@ -1,40 +1,15 @@
-import {
-  useContext, useEffect, useState,
-} from 'react';
-import { useNavigate } from 'react-router-dom';
 import Search from '../../common/Search/Search';
-import { list, searchContainName } from '../../../utils/services/groups';
-import AuthContext from '../../../context/authContext';
-import { SUCCESS } from '../../../consts/consts';
 import Pagination from '../../common/Pagination/Pagination';
 import usePagination from '../../../hooks/usePagination';
 import GroupRow from './GroupRow';
+import useGroup from '../../../hooks/useGroup';
 
 function Groups() {
-  const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
-  const [groups, setGroups] = useState([]);
   const [increment, decrement, skip, limit] = usePagination();
-  const [isSearching, setIsSearching] = useState(false);
 
-  useEffect(() => {
-    list(skip, limit, user.token).then((response) => {
-      if (response.status === SUCCESS) {
-        setGroups(response.data);
-      }
-    });
-  }, [skip, limit, isSearching]);
-
-  const search = (e) => {
-    if (e.target.value.length > 0) {
-      searchContainName(e.target.value, user.token).then((response) => {
-        setGroups(response.data);
-        setIsSearching(true);
-      });
-    } else {
-      setIsSearching(false);
-    }
-  };
+  const {
+    navigate, groups, search, isSearching,
+  } = useGroup(skip, limit);
 
   return (
     <>
@@ -83,7 +58,7 @@ function Groups() {
           </div>
         </div>
       </div>
-      <Pagination increment={increment} decrement={decrement} />
+      {!isSearching && <Pagination increment={increment} decrement={decrement} />}
     </>
   );
 }
