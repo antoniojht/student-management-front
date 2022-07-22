@@ -9,6 +9,7 @@ import {
   create, listMembersByGroup, removeStudentFromGroup, editGroup,
 } from '../../../../utils/services/groups';
 import GroupMember from './GroupMember';
+import ModalContent from '../../../common/Modal/ModalContent';
 
 function Group() {
   const initialState = {
@@ -17,6 +18,7 @@ function Group() {
 
   const { user } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenContent, setIsOpenContent] = useState(false);
   const [creating, setCreating] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState(false);
@@ -97,6 +99,7 @@ function Group() {
   return (
     <>
       {isOpen && <Modal header="Asignatura" body={message} setIsOpen={setIsOpen} navigate={navigateToStudent} />}
+      {isOpenContent && <ModalContent header="Alumnos" body={message} setIsOpen={setIsOpenContent} />}
       {error && <Error />}
       <div className="mx-auto m-8 w-full max-w-[550px]">
         <form onSubmit={handleSubmit}>
@@ -150,7 +153,7 @@ function Group() {
                   ))}
                 </tbody>
               </table>
-              <button className="main-button" type="button">Añadir alumno</button>
+              <button className="main-button" onClick={() => { setIsOpenContent(true); }} type="button">Añadir alumno</button>
             </div>
           )}
           <div>

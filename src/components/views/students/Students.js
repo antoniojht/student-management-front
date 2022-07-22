@@ -1,51 +1,24 @@
-import {
-  useContext, useEffect, useState,
-} from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import Search from '../../common/Search/Search';
-import { list, searchContainName } from '../../../utils/services/students';
-import AuthContext from '../../../context/authContext';
-import { SUCCESS } from '../../../consts/consts';
 import Pagination from '../../common/Pagination/Pagination';
-import usePagination from '../../../hooks/usePagination';
 import StudentRow from './StudentRow';
 import Select from '../../common/Select/Select';
+import useUser from '../../../hooks/useUser';
+import usePagination from '../../../hooks/usePagination';
 
 function Students() {
-  const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
-  const [students, setStudents] = useState([]);
   const [increment, decrement, skip, limit] = usePagination();
-  const [isSearching, setIsSearching] = useState(false);
 
   const [order, setOrder] = useState('name');
+  const {
+    navigate, students, search, isSearching,
+  } = useUser(order, skip, limit);
 
   const selectOptions = [
     { value: 'name', label: 'Nombre' },
     { value: 'email', label: 'Email' },
     { value: 'date', label: 'Fecha' },
   ];
-
-  useEffect(() => {
-    if (!isSearching) {
-      list(skip, limit, user.token, order).then((response) => {
-        if (response.status === SUCCESS) {
-          setStudents(response.data);
-        }
-      });
-    }
-  }, [skip, limit, isSearching, order]);
-
-  const search = (e) => {
-    if (e.target.value.length > 0) {
-      searchContainName(e.target.value, user.token).then((response) => {
-        setStudents(response.data);
-        setIsSearching(true);
-      });
-    } else {
-      setIsSearching(false);
-    }
-  };
 
   const handleOrder = (e) => {
     setOrder(e.target.value);
