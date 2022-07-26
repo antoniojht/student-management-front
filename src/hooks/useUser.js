@@ -1,14 +1,12 @@
 import { useContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/authContext';
 import { list, searchContainName } from '../utils/services/students';
 import { SUCCESS } from '../consts/consts';
 
-const useUser = (order, skip, limit) => {
+const useUser = (order = 'name', skip = 1, limit = 5) => {
   const { user } = useContext(AuthContext);
   const [students, setStudents] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!isSearching) {
@@ -32,7 +30,7 @@ const useUser = (order, skip, limit) => {
   };
 
   return {
-    navigate, students, search, isSearching,
+    students, search, isSearching,
   };
 };
 

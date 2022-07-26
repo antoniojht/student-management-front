@@ -1,18 +1,18 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 function ModalContent({
-  header, body, setIsOpen,
+  header, setIsOpen, ...otherProps
 }) {
   return (
     <>
       <div className="darkBG" onClick={() => setIsOpen(false)} />
       <div className="centered">
-        <div className="modal">
+        <div className="modalContent">
           <div className="modalHeader">
             <h5 className="heading">{header}</h5>
           </div>
           <button type="button" className="closeBtn" onClick={() => setIsOpen(false)} />
           <div className="modalContent">
-            {body}
+            {otherProps.children}
           </div>
           <div className="modalActions">
             <div className="actionsContainer">

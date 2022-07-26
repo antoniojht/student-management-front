@@ -4,21 +4,29 @@ import AuthContext from '../../../../context/authContext';
 import useForm from '../../../../hooks/useForm';
 import Modal from '../../../common/Modal/Modal';
 import Error from '../../../common/Error/Error';
+import Select from '../../../common/Select/Select';
 import { SUCCESS } from '../../../../consts/consts';
 import {
   create, listMembersByGroup, removeStudentFromGroup, editGroup,
 } from '../../../../utils/services/groups';
 import GroupMember from './GroupMember';
-import ModalContent from '../../../common/Modal/ModalContent';
+import { getAll } from '../../../../utils/services/students';
 
 function Group() {
   const initialState = {
     name: '', members: [],
   };
 
+  const [students, setStudents] = useState([]);
+  const [selectUser, setSelectUser] = useState({});
+  const [selectedUsers, setSelectedUsers] = useState([]);
+
+  const selectOptions = students.map((student) => ({
+    value: student._id, label: `${student.name} ${student.surname}`,
+  }));
+
   const { user } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
-  const [isOpenContent, setIsOpenContent] = useState(false);
   const [creating, setCreating] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState(false);
@@ -41,6 +49,12 @@ function Group() {
           setError(true);
         }
       });
+
+      getAll(user.token).then((response) => {
+        if (response.status === SUCCESS) {
+          setStudents(response.data);
+        }
+      });
     } else {
       setCreating(true);
     }
@@ -61,7 +75,7 @@ function Group() {
         setError(true);
       }
     } else {
-      const groupEdited = await editGroup(params.name, name, user.token);
+      const groupEdited = await editGroup(params.name, name, members, user.token);
 
       if (groupEdited.status === SUCCESS) {
         setMessage('Grupo editado correctamente');
@@ -74,20 +88,38 @@ function Group() {
   };
 
   const popFromCourse = (member) => {
-    removeStudentFromGroup(params.name, member._id, user.token)
-      .then((response) => {
-        if (response.status === SUCCESS) {
-          setMessage('Estudiante retirado correctamente');
-          const index = members.findIndex((m) => m.email === member.email);
-          if (index > -1) {
-            members.splice(index, 1);
+    if (member?.provisional) {
+      members.findIndex((m) => m._id === member._id);
+      members.splice(members.findIndex((m) => m._id === member._id), 1);
+      setValues({ ...values, members });
+    } else {
+      removeStudentFromGroup(params.name, member._id, user.token)
+        .then((response) => {
+          if (response.status === SUCCESS) {
+            setMessage('Estudiante retirado correctamente');
+            const index = members.findIndex((m) => m.email === member.email);
+            if (index > -1) {
+              members.splice(index, 1);
+            }
+            setValues({ ...values, members });
+          } else {
+            setMessage('Ocurrio un error durante la retirada del estudiante');
+            setError(true);
           }
-          setValues({ ...values, members });
-        } else {
-          setMessage('Ocurrio un error durante la retirada del estudiante');
-          setError(true);
-        }
-      });
+        });
+    }
+  };
+
+  const addStudentAsSelected = (userSelected) => {
+    setSelectedUsers([...selectedUsers, userSelected[0]]);
+    const localUser = userSelected[0];
+    localUser.provisional = true;
+    setValues({ ...values, members: [...members, localUser] });
+  };
+
+  const handleSelectUser = (e) => {
+    const actualStudent = students.filter((student) => student._id === e.target.value);
+    setSelectUser(actualStudent);
   };
 
   const navigateToStudent = () => {
@@ -99,7 +131,6 @@ function Group() {
   return (
     <>
       {isOpen && <Modal header="Asignatura" body={message} setIsOpen={setIsOpen} navigate={navigateToStudent} />}
-      {isOpenContent && <ModalContent header="Alumnos" body={message} setIsOpen={setIsOpenContent} />}
       {error && <Error />}
       <div className="mx-auto m-8 w-full max-w-[550px]">
         <form onSubmit={handleSubmit}>
@@ -153,7 +184,12 @@ function Group() {
                   ))}
                 </tbody>
               </table>
-              <button className="main-button" onClick={() => { setIsOpenContent(true); }} type="button">Añadir alumno</button>
+              <Select
+                name={selectUser}
+                handleChange={handleSelectUser}
+                options={selectOptions}
+              />
+              <button className="main-button" onClick={() => { addStudentAsSelected(selectUser); }} type="button">Añadir alumno</button>
             </div>
           )}
           <div>
