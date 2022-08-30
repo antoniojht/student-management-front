@@ -11,8 +11,10 @@ import Modal from '../../../common/Modal/Modal';
 import {
   getById, removeStudentFromSubject, create, editUser,
 } from '../../../../utils/services/students';
+import { getAll } from '../../../../utils/services/subjects';
 import AuthContext from '../../../../context/authContext';
 import { SUCCESS } from '../../../../consts/consts';
+import Select from '../../../common/Select/Select';
 
 function Student() {
   const initialState = {
@@ -20,6 +22,14 @@ function Student() {
   };
 
   const { user } = useContext(AuthContext);
+
+  const [subjects, setSubjects] = useState([]);
+  const [selectSubject, setSelectedSubject] = useState({});
+  const [selectedSubjects, setSelectedSubjects] = useState([]);
+
+  const selectOptions = subjects.map((subject) => ({
+    value: subject._id, label: `${subject.name} ${subject.grade}`,
+  }));
 
   const [isOpen, setIsOpen] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -44,6 +54,12 @@ function Student() {
           setError(true);
         }
       });
+
+      getAll(user.token).then((response) => {
+        if (response.status === SUCCESS) {
+          setSubjects(response.data);
+        }
+      });
     } else {
       setCreating(true);
     }
@@ -53,11 +69,11 @@ function Student() {
     name, surname, telephone, email, active, course, score, payment,
   } = values;
 
-  const removeCourse = async (subject) => {
-    const removedCourse = await removeStudentFromSubject(email, subject, user.token);
+  const removeCourse = async (subjt) => {
+    const removedCourse = await removeStudentFromSubject(email, subjt, user.token);
 
     if (removedCourse.status === SUCCESS || removedCourse.status === 200) {
-      const index = removedCourse.data.course.indexOf(subject);
+      const index = removedCourse.data.course.indexOf(subjt);
       if (index > -1) {
         removedCourse.data.course.splice(index, 1);
       }
@@ -96,6 +112,16 @@ function Student() {
     if (!error) {
       navigate('/students', { replace: true });
     }
+  };
+
+  const handleSelectSubject = (e) => {
+    const actualSubject = subjects.filter((subjt) => subjt._id === e.target.value);
+    setSelectedSubject(actualSubject);
+  };
+
+  const addSubjectAsSelected = (subjectSelected) => {
+    setSelectedSubjects([...selectedSubjects, subjectSelected[0]]);
+    setValues({ ...values, course: [...course, subjectSelected[0]] });
   };
 
   return (
@@ -206,7 +232,12 @@ function Student() {
                     }
                   </tbody>
                 </table>
-                <button className="main-button" type="button">Añadir asignatura</button>
+                <Select
+                  name={selectSubject}
+                  handleChange={handleSelectSubject}
+                  options={selectOptions}
+                />
+                <button className="main-button" type="button" onClick={() => { addSubjectAsSelected(selectSubject); }}>Añadir asignatura</button>
               </div>
               <div className="mb-8">
                 <label htmlFor="payments" className="label-form">Puntuaciones</label>

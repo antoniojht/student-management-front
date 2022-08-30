@@ -71,3 +71,17 @@ export const searchContainName = async (name, token) => {
 
   return response.json();
 };
+
+export const getAll = async (token) => {
+  const requestOptions = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const response = await fetch(`${BACKEND_URL}/subject/getAllWithoutPagination`, requestOptions);
+
+  return response.json();
+};

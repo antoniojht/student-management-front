@@ -5,7 +5,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { SUCCESS } from '../../../../consts/consts';
 import AuthContext from '../../../../context/authContext';
 import useForm from '../../../../hooks/useForm';
-import { create, edit, getById } from '../../../../utils/services/subjects';
+import {
+  create, edit, getById,
+} from '../../../../utils/services/subjects';
 import Error from '../../../common/Error/Error';
 import Modal from '../../../common/Modal/Modal';
 
