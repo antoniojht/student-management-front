@@ -15,13 +15,21 @@ const useForm = (initialState = {}) => {
   };
 
   const handleToggleChange = ({ target }) => {
-    setValues(() => {
-      const newValue = !values[target.name];
-      return {
-        ...values,
-        [target.name]: newValue,
-      };
+    const newValue = !values[target.name];
+
+    setValues({
+      ...values,
+      [target.name]: newValue,
     });
+
+    // use to work :(
+    // setValues(() => {
+    //   const newValue = !values[target.name];
+    //   return {
+    //     ...values,
+    //     [target.name]: newValue,
+    //   };
+    // });
   };
 
   return {
